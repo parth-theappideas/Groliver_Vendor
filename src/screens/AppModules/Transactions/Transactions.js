@@ -90,7 +90,7 @@ const Transactions = ({item}) => {
                 <FlatList
                     data={TransactionData}
                     renderItem={renderTransaction}
-                    keyExtractor={(index)=> index.toString()}
+                    keyExtractor={(item)=> item.id}
                     contentContainerStyle={{
                         paddingBottom:vs(50)
                     }}

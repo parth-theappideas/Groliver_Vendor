@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, ScrollView, StatusBar } from 'react-native'
+import { View, Text, Image, ScrollView, StatusBar, ToastAndroid } from 'react-native'
 import { Fonts } from "../../../assets/fonts/fonts";
 import Images from "../../../const/Images";
 import { fs, hs, screenWidth, vs } from "../../../utils/stylesUtils";
@@ -10,19 +10,40 @@ import Container from "../../../components/container";
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import Label from "../../../components/Label";
+import { resetpasswordApi } from "../../../utils/apiServices";
 
-const ResetPassword = ({ navigation }) => {
+const ResetPassword = ({ navigation, route }) => {
+
     const ResetPasswordSchema = yup.object({
         Newpassword: yup.string()
             .required("Required *")
             .min(6, 'Password must be at least 6 characters'),
         Confirmpassword: yup.string()
-            .required("Required *")
             .min(6, 'Password must be at least 6 characters')
             .oneOf([yup.ref('password'), null], 'Passwords must match')
     })
+
+    async function ResetPasswordHandler(values) {
+        console.log(values);
+
+        var formData = new FormData();
+        formData.append("mobile_no", route.params.mobile_no);
+        formData.append("password", route.params.password);
+
+        let response = await resetpasswordApi({ data: formData })
+        console.log("res", response);
+
+        if (response.status == 'Success') {
+            navigation.navigate("Signin");
+            ToastAndroid.show("Reset Password Successfully", ToastAndroid.SHORT);
+            console.log("response", response);
+        } else {
+            alert(response.message);
+        }
+    }
+
     return (
-        <ScrollView style={{ backgroundColor: 'white' }}>       
+        <ScrollView style={{ backgroundColor: 'white' }}>
             <Container containerStyle={styles.container}>
                 <StatusBar backgroundColor="white" barStyle="dark-content" />
                 <Image
@@ -32,9 +53,10 @@ const ResetPassword = ({ navigation }) => {
 
                 <Text style={styles.text1}>Reset your password</Text>
 
-                <Formik 
-                    initialValues={{ Newpassword:'', Confirmpassword:'' }}
+                <Formik
+                    initialValues={{ Newpassword: '', Confirmpassword: '' }}
                     validationSchema={ResetPasswordSchema}
+                    onSubmit={ResetPasswordHandler}
                 >
                     {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
                         <>
@@ -56,9 +78,9 @@ const ResetPassword = ({ navigation }) => {
                                 textSize={14}
                             />
                             {errors.Newpassword && <Label style={{
-                                color:'red',
-                                alignSelf:'flex-start',
-                                marginLeft:hs(20)
+                                color: 'red',
+                                alignSelf: 'flex-start',
+                                marginLeft: hs(20)
                             }}>{errors.Newpassword}</Label>}
 
                             <InputBox
@@ -76,7 +98,7 @@ const ResetPassword = ({ navigation }) => {
                                 textSize={14}
                             />
                             {errors.Confirmpassword && <Label style={{
-                                color:'red',
+                                color: 'red',
                                 alignSelf: 'flex-start',
                                 marginLeft: hs(20)
                             }}>{errors.Confirmpassword}</Label>}
@@ -94,7 +116,7 @@ const ResetPassword = ({ navigation }) => {
                                 btnHeight={50}
                                 textColor={'white'}
                                 textSize={14}
-                                onPress={() => navigation.navigate("Verification")}
+                                onPress={handleSubmit}
                             />
                         </>
                     )}

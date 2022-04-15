@@ -60,71 +60,74 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
         // marginTop:vs(2)
     },
-    text3:{
+    text3: {
         fontSize: fs(16),
         color: '#000',
         marginLeft: hs(7),
         fontFamily: Fonts.regular
     },
-    rightimg:{
+    rightimg: {
         width: hs(15),
         height: vs(15),
         resizeMode: 'contain',
-        tintColor:'#000'
+        tintColor: '#000'
     },
-    borderView:{
+    borderView: {
         borderWidth: 1,
         borderColor: '#f2f2f2',
         marginTop: vs(15),
         marginHorizontal: hs(20)
     },
-    container7:{
+    container7: {
         marginTop: vs(20),
         marginHorizontal: hs(20)
     },
-    container8:{
+    container8: {
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    container9:{
+    container9: {
         flexDirection: 'row',
     },
-    helpimg:{
+    helpimg: {
         width: hs(20),
         height: vs(20),
         resizeMode: 'contain',
         alignItems: 'center',
         alignSelf: 'center'
     },
-    text4:{
+    text4: {
         fontSize: fs(16),
         color: '#000',
         marginLeft: hs(10),
         fontFamily: Fonts.regular
     },
-    container10:{
+    container10: {
         marginTop: vs(20),
         marginHorizontal: hs(20)
     },
-    container11:{
+    container11: {
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    container12:{
+    container12: {
         flexDirection: 'row',
     },
-    logoutimg:{
+    logoutimg: {
         width: hs(20),
         height: vs(20),
         resizeMode: 'contain',
         alignItems: 'center',
         alignSelf: 'center'
     },
-    text5:{
+    text5: {
         fontSize: fs(16),
         color: '#000',
         marginLeft: hs(10),
         fontFamily: Fonts.regular
+    },
+    LoadingIndicator: {
+        marginLeft: hs(13)
     }
 })
 

@@ -1,13 +1,79 @@
-import React from "react";
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import React, { useState, useEffect } from "react";
+import { View, Text, Image, TouchableOpacity, Pressable, ToastAndroid, ActivityIndicator, TextInput } from 'react-native'
 import { Fonts } from "../../../assets/fonts/fonts";
 import Container from "../../../components/container";
 import Label from "../../../components/Label";
 import Images from "../../../const/Images";
-import { fs, hs, vs } from "../../../utils/stylesUtils";
+import { fs, hs, screenWidth, vs } from "../../../utils/stylesUtils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./Styles";
+import LoadingIndicator from "../../../components/LoadingIndicator";
 
 const Profile = ({ navigation }) => {
+
+    const [Loading, setLoading] = useState(false);
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [mobileNo, setMobileNo] = useState("");
+    const [data, setData] = useState("");
+
+    const Logout = async () => {
+        setLoading(true);
+        try {
+            const Data = await AsyncStorage.removeItem('@store1:User');
+            if (Data) {
+                navigation.replace("Signin");
+                ToastAndroid.show("Logout Successfully", ToastAndroid.SHORT);
+            } else {
+                console.log("Unsuccessfull Delete", Data);
+            }
+            console.log("Successfully Delete", Data);
+        }
+        catch (e) {
+            console.log("error", e);
+        }
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Signin' }]
+        })
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        ProfileHandler();
+    }, [])
+
+    const ProfileHandler = async () => {
+        let response = await fetch('https://chessmafia.com/php/Groliver/api/vendor/get-profile', {
+            method: 'GET',
+        })
+        response = await response.json();
+        console.log("responses", response);
+
+        if (response.status == 'Success') {
+            console.log("responses", response);
+            const NameAccess = response.data[0].name
+            setName(NameAccess);
+            const EmailAccess = response.data[0].email
+            setEmail(EmailAccess);
+            const MobileNumAccess = response.data[0].mobileNo
+            setMobileNo(MobileNumAccess);
+        } else {
+            alert(response.message);
+        }
+    }
+
+    useEffect(() => {
+        readData();
+    }, [])
+
+    const readData = async () => {
+        AsyncStorage.getItem('@store1:User').then((value) => {
+            const getData = JSON.parse(value);
+            setData(getData.data);
+        })
+    }
+
     return (
         <Container containerStyle={styles.container}>
             <Container containerStyle={styles.mainContainer}>
@@ -17,17 +83,21 @@ const Profile = ({ navigation }) => {
                 />
                 <Container>
                     <Container containerStyle={styles.container2}>
-                        <Label style={styles.text}>SuperComNet</Label>
-                        <TouchableOpacity onPress={() => navigation.navigate("Editprofile")}>
+                        <Label style={styles.text}>{name}</Label>
+                        <Pressable onPress={() => navigation.navigate("Editprofile", {
+                            nameData: name,
+                            emailData: email,
+                            mobileNoData: mobileNo,
+                        })}>
                             <Image
                                 source={Images.edit}
                                 style={styles.editimg}
                             />
-                        </TouchableOpacity>
+                        </Pressable>
                     </Container>
 
                     <Container containerStyle={styles.container3}>
-                        <Label style={styles.text2}>supercomnet@mail.com</Label>
+                        <Label style={styles.text2}>{email}</Label>
                     </Container>
                 </Container>
             </Container>
@@ -75,7 +145,7 @@ const Profile = ({ navigation }) => {
             <Container containerStyle={styles.borderView} />
 
             <Container containerStyle={styles.container10}>
-                <Container>
+                <Container onPress={() => Logout()}>
                     <Container containerStyle={styles.container11}>
                         <Container containerStyle={styles.container12}>
                             <Image
@@ -92,6 +162,11 @@ const Profile = ({ navigation }) => {
                     </Container>
                 </Container>
             </Container>
+            {Loading ?
+                <View style={styles.LoadingIndicator}>
+                    <LoadingIndicator />
+                </View>
+                : null}
         </Container>
     )
 }

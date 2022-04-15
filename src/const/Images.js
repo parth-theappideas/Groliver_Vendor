@@ -73,8 +73,11 @@ const search_2 = require('../assets/images/search2.png');
 const profile_pic = require('../assets/images/profile_pic.png');
 const logout_pic = require('../assets/images/logout_pic.png');
 const item_3 = require('../assets/images/item3.png');
+const upload = require('../assets/images/upload.png');
+const addPics = require('../assets/images/addpics.png');
 
-export default{
+export default {
+    addPics,
     png1,
     png2,
     png3,
@@ -150,5 +153,5 @@ export default{
     profile_pic,
     logout_pic,
     item_3,
-    
+    upload
 }

@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, Image, ScrollView, StatusBar } from 'react-native'
+import React, { useState } from "react";
+import { View, Text, Image, ScrollView, StatusBar, ToastAndroid } from 'react-native'
 import { Fonts } from "../../../assets/fonts/fonts";
 import Images from "../../../const/Images";
 import { fs, hs, screenWidth, vs } from "../../../utils/stylesUtils";
@@ -10,14 +10,45 @@ import Container from "../../../components/container";
 import Label from "../../../components/Label";
 import { Formik } from 'formik'
 import * as yup from 'yup'
+import LoadingIndicator from "../../../components/LoadingIndicator";
+import { forgotpasswordApi } from "../../../utils/apiServices";
 
 const ForgotPassword = ({ navigation }) => {
 
+    const [Loading, setLoading] = useState(false);
+
     const ForgotPasswordSchema = yup.object({
-        email: yup.string()
-            .required("Required *")
-            .email("Email is invalid"),
+        mobile_no: yup
+            .number()
+            .min(1999999999, "Not Valid Phone Number !")
+            .max(9999999999, "Not Valid Phone Number !"),
     })
+
+    async function ForgotPasswordHandler(values) {
+        console.log(values);
+        setLoading(true);
+
+        var formData = new FormData();
+        formData.append("mobile_no", values.mobile_no);
+        formData.append("fcm_token", '');
+
+        let response = await forgotpasswordApi({ data: formData })
+        console.log("response", response);
+
+        if (response.status == 'Success') {
+            setLoading(false);
+            navigation.navigate("Verification", {
+                mobile_no: values.mobile_no,
+                routes: [{ name: 'Verification' }],
+            })
+            ToastAndroid.show("Forgot Password Successfully", ToastAndroid.SHORT);
+            console.log("response", response);
+        } else {
+            alert(response.message);
+            setLoading(false);
+        }
+    }
+
     return (
         <ScrollView style={{ backgroundColor: 'white' }}>
             <Container containerStyle={styles.container}>
@@ -30,18 +61,19 @@ const ForgotPassword = ({ navigation }) => {
                 <Label style={styles.text1}>Forgot your password</Label>
 
                 <Container containerStyle={styles.container2}>
-                    <Label style={styles.text2}>Enter your email address below and we will</Label>
+                    <Label style={styles.text2}>Enter your mobile number below and we will</Label>
                     <Label style={styles.text3}>send you a verification code</Label>
                 </Container>
 
                 <Formik
-                    initialValues={{ email: '' }}
+                    initialValues={{ mobile_no: '' }}
                     validationSchema={ForgotPasswordSchema}
+                    onSubmit={ForgotPasswordHandler}
                 >
                     {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
                         <>
                             <InputBox
-                                placeholder="Email"
+                                placeholder="Phone number"
                                 inputStyle={{
                                     maxWidth: '75%'
                                 }}
@@ -51,17 +83,19 @@ const ForgotPassword = ({ navigation }) => {
                                     borderColor: '#F2F2F2',
                                     marginTop: vs(20)
                                 }}
-                                onChangeText={handleChange('email')}
-                                onBlur={handleBlur('email')}
-                                value={values.email}
+                                onChangeText={handleChange('mobile_no')}
+                                onBlur={handleBlur('mobile_no')}
+                                value={values.mobile_no}
+                                keyboardType="numeric"
                                 inputHeight={50}
                                 textSize={14}
                             />
-                            {errors.email && <Label style={{
+                            {errors.mobile_no && <Label style={{
                                 color: 'red',
                                 alignSelf: 'flex-start',
-                                marginLeft: hs(20)
-                            }}>{errors.email}</Label>}
+                                marginLeft: hs(20),
+                                marginTop: vs(5)
+                            }}>{errors.mobile_no}</Label>}
 
                             <Btn
                                 title="Send"
@@ -76,7 +110,7 @@ const ForgotPassword = ({ navigation }) => {
                                 btnHeight={50}
                                 textColor={'white'}
                                 textSize={14}
-                                onPress={() => navigation.navigate("ResetPassword")}
+                                onPress={handleSubmit}
                             />
                         </>
                     )}
@@ -99,8 +133,16 @@ const ForgotPassword = ({ navigation }) => {
                     labelStyle={{
                         fontWeight: 'bold'
                     }}
+                    onPress={() => navigation.navigate("Signin")}
                 />
             </Container>
+
+            {Loading ?
+                <View style={styles.LoadingIndicator}>
+                    <LoadingIndicator />
+                </View>
+                : null}
+
         </ScrollView>
     )
 }

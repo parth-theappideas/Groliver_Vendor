@@ -1,17 +1,76 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Image, StatusBar, Modal } from 'react-native'
-import { Fonts } from "../../../assets/fonts/fonts";
+import { View, Text, ScrollView, Image, StatusBar, Modal, ToastAndroid } from 'react-native'
 import Images from "../../../const/Images";
 import { fs, hs, screenWidth, vs } from "../../../utils/stylesUtils";
 import Btn from "../../../components/Btn";
 import styles from "./Styles";
 import Container from "../../../components/container";
 import Label from "../../../components/Label";
-import VerificationOtp from "./VerificationOtp";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Globals from "../../../utils/Globals"
+import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell, } from 'react-native-confirmation-code-field';
+import { Formik } from 'formik'
+import * as yup from 'yup'
+import VerificationModal from "../../../modals/VerificationModal";
+import { verificationApi } from "../../../utils/apiServices";
 
-const Verification = ({ navigation }) => {
-    const [value, setValue] = useState('');
+const CELL_COUNT = 6;
+
+const Verification = ({ navigation, route }) => {
+
     const [modalVisible, setModalVisible] = useState(false);
+    const [value, setValue] = useState('');
+    const [Loading, setLoading] = useState(false);
+    const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
+    const [rest, getCellOnLayoutHandler] = useClearByFocusCell({
+        value,
+        setValue,
+    });
+
+    const VerificationSchema = yup.object({
+        otp: yup.number()
+            .required('')
+    })
+
+    const VerificationHandler = async (values) => {
+        console.log(values);
+        setLoading(true);
+
+        var formData = new FormData();
+        formData.append("mobile_no", route.params.mobile_no);
+        formData.append("otp", values.otp);
+
+        let response = await verificationApi({ data: formData })
+        console.log("res", response);
+
+        // if (response.status == 'Success' && route.params.mobile_no){
+        //     navigation.navigate("ResetPassword");
+        // }else{
+        //     alert(response.message);
+        // }
+
+        if (response.status == 'Success') {
+            setLoading(true);
+            Globals.api_token = response.data.api_token
+            await AsyncStorage.setItem('@store1:User', JSON.stringify({ data: response.data }));
+
+            navigation.navigate("ResetPassword", {
+                mobile_no: route.params.mobile_no,
+                password: route.params.password,
+                routes: [{ name: 'ResetPassword' }],
+            })
+            setLoading(false);
+            ToastAndroid.show("OTP Verify Successfully", ToastAndroid.SHORT);
+            console.log("response", response);
+        }
+        else {
+            alert(response.message);
+            navigation.navigate("Verification");
+            setLoading(false);
+            ToastAndroid.show("OTP Verify Unsuccessfull", ToastAndroid.SHORT);
+        }
+    }
+
     return (
         <ScrollView style={{ backgroundColor: 'white' }}>
             <Container containerStyle={styles.container}>
@@ -21,178 +80,88 @@ const Verification = ({ navigation }) => {
                     style={styles.emaillogo}
                 />
 
-                <Label style={styles.text1}>Verify your email</Label>
+                <Label style={styles.text1}>Verify your SMS</Label>
 
                 <Container containerStyle={styles.container2}>
-                    <Label style={styles.text2}>Check your email for an OTP</Label>
-                    <Label style={styles.text3}>michaelclark68@mail.com</Label>
+                    <Label style={styles.text2}>Check your SMS for an OTP</Label>
                 </Container>
 
-                {/* <Container containerStyle={{
-                    marginTop:vs(50),
-                    flexDirection:'row',
-                    justifyContent:'space-evenly'
-                }}>
-                    <Container containerStyle={{
-                        borderWidth: 1,
-                        width:hs(30),
-                        borderColor:'#009345'
-                    }}
-                    />
-
-                    <Container containerStyle={{
-                        borderWidth: 1,
-                        width: hs(30),
-                        borderColor: '#009345',
-                        marginLeft:hs(20)
-                    }}
-                    />
-
-                    <Container containerStyle={{
-                        borderWidth: 1,
-                        width: hs(30),
-                        borderColor: '#009345',
-                        marginLeft: hs(20)
-                    }}
-                    />
-
-                    <Container containerStyle={{
-                        borderWidth: 1,
-                        width: hs(30),
-                        borderColor: '#009345',
-                        marginLeft: hs(20)
-                    }}
-                    />
-                </Container> */}
-
-                <VerificationOtp
-                    value={value}
-                    setValue={setValue}
-                />
-
-                <Btn
-                    title="Verify"
-                    btnStyle={{
-                        backgroundColor: '#009345',
-                        borderRadius: 5,
-                        justifyContent: 'center',
-                        width: '92%',
-                        // elevation: 2,
-                        alignSelf: 'center',
-                        // marginTop: vs(40),
-                    }}
-                    btnHeight={50}
-                    textColor={'white'}
-                    textSize={14}
-                    // onPress={() => navigation.navigate("ResetPassword")}
-                    onPress={() => setModalVisible(true)}
-                />
-        
-                <Btn
-                    title="Resend OTP"
-                    btnStyle={{
-                        backgroundColor: '#fff',
-                        borderRadius: 5,
-                        justifyContent: 'center',
-                        width: '92%',
-                        borderColor: '#fff',
-                        alignSelf: 'center',
-                        marginTop: vs(20),
-                    }}
-                    btnHeight={50}
-                    textColor={'#000'}
-                    labelStyle={{
-                        fontWeight: 'bold'
-                    }}
-                    textSize={14}
-                />
-            </Container>
-
-            <Container containerStyle={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-            }}>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={() => {
-                        Alert.alert("Modal has been closed.");
-                        setModalVisible(!modalVisible);
-                    }}
-                    statusBarTranslucent={true}
-                >
-                    <Container containerStyle={{
+                <View style={styles.root}>
+                    <View style={{
                         flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: 'rgba(0,0,0,0.6)',
+                        alignItems: 'center'
                     }}>
-                        <Container containerStyle={{
-                            borderRadius: 20,
-                            alignItems: "center",
-                            backgroundColor:'white',
-                            shadowColor: '#000',
-                            // shadowOffset: {
-                            //     width: 0,
-                            //     height: 2,
-                            // },
-                            shadowOpacity: 0.25,
-                            shadowRadius: 4,
-                            elevation: 5,
-                            height: vs(320),
-                            width: '92%',
-                        }}>
-                            <Image
-                                source={Images.success}
-                                style={{
-                                    width: hs(100),
-                                    height: vs(100),
-                                    resizeMode: 'contain',
-                                    marginTop: vs(30)
-                                }}
-                            />
+                        <Formik
+                            initialValues={{ otp: '', mobile_no: '' }}
+                            validationSchema={VerificationSchema}
+                            onSubmit={VerificationHandler}
+                        >
+                            {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
+                                <>
+                                    <CodeField
+                                        ref={ref}
+                                        {...rest}
+                                        value={values.otp}
+                                        onChangeText={handleChange('otp')}
+                                        onBlur={handleBlur('otp')}
+                                        cellCount={CELL_COUNT}
+                                        rootStyle={styles.codeFieldRoot}
+                                        keyboardType="number-pad"
+                                        textContentType="oneTimeCode"
+                                        renderCell={({ index, symbol, isFocused }) => (
+                                            <Text
+                                                key={index}
+                                                style={[styles.cell, isFocused && styles.focusCell]}
+                                                onLayout={getCellOnLayoutHandler(index)}>
+                                                {symbol || (isFocused ? <Cursor /> : null)}
+                                            </Text>
+                                        )}
+                                    />
 
-                            <Container containerStyle={{
-                                marginTop:vs(25),
-                                alignItems:'center'
-                            }}>
-                                <Label onPress={() => setModalVisible(!modalVisible)} style={{
-                                    fontSize:fs(18),
-                                    color:'#000',
-                                    fontWeight:'bold'
-                                }}>Welcome!!!</Label>
+                                    <Btn
+                                        title="Verify"
+                                        btnStyle={{
+                                            backgroundColor: '#009345',
+                                            borderRadius: 5,
+                                            justifyContent: 'center',
+                                            width: '120%',
+                                            alignSelf: 'center',
+                                            marginTop: vs(30),
+                                        }}
+                                        btnHeight={50}
+                                        textColor={'white'}
+                                        textSize={14}
+                                        onPress={handleSubmit}
+                                    />
 
-                                <Label onPress={() => setModalVisible(!modalVisible)} style={{
-                                    fontSize: fs(16),
-                                    marginTop:vs(10)
-                                }}>Your account has been verified</Label>
-                            </Container>
-
-                            <Btn
-                                title="Go to dashboard"
-                                btnStyle={{
-                                    backgroundColor: '#009345',
-                                    borderRadius: 5,
-                                    justifyContent: 'center',
-                                    width: '92%',
-                                    borderColor: '#fff',
-                                    alignSelf: 'center',
-                                    marginTop: vs(20),
-                                }}
-                                btnHeight={50}
-                                textColor={'#fff'}
-                                labelStyle={{
-                                    fontWeight: 'bold'
-                                }}
-                                textSize={14}
-                                onPress={() => navigation.navigate("Dashboard")}
-                            />
-                        </Container>
-                    </Container>
-                </Modal>
+                                    <Btn
+                                        title="Resend OTP"
+                                        btnStyle={{
+                                            backgroundColor: '#fff',
+                                            borderRadius: 5,
+                                            justifyContent: 'center',
+                                            width: '120%',
+                                            borderColor: '#fff',
+                                            alignSelf: 'center',
+                                            marginTop: vs(20),
+                                        }}
+                                        btnHeight={50}
+                                        textColor={'#000'}
+                                        labelStyle={{
+                                            fontWeight: 'bold'
+                                        }}
+                                        textSize={14}
+                                    />
+                                </>
+                            )}
+                        </Formik>
+                    </View>
+                </View>
             </Container>
+            <VerificationModal
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+            />
         </ScrollView>
     )
 }

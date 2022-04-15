@@ -1,27 +1,71 @@
-import React from "react";
-import { View, Text, Image, ScrollView, StatusBar } from 'react-native'
+import React, { useEffect, useState } from "react";
+import { View, Text, Image, ScrollView, StatusBar, Pressable, ToastAndroid, ActivityIndicator } from 'react-native'
 import { Fonts } from "../../../assets/fonts/fonts";
 import Images from "../../../const/Images";
 import InputBox from "../../../components/InputBox";
 import Btn from "../../../components/Btn";
-import { fs, hs, vs } from "../../../utils/stylesUtils";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { fs, hs, screenHeight, screenWidth, vs } from "../../../utils/stylesUtils";
 import styles from "./Styles";
 import Container from "../../../components/container";
 import Label from "../../../components/Label";
 import { Formik } from 'formik'
 import * as yup from 'yup'
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Globals from "../../../utils/Globals"
+import { loginApi } from "../../../utils/apiServices";
+import LoadingIndicator from "../../../components/LoadingIndicator";
 
-const Signin = ({ navigation }) => {
+const Signin = ({ navigation, route }) => {
+
+    const [Loading, setLoading] = useState(false);
+
     const SigninSchema = yup.object({
-        email: yup.string()
-            .required("Required *")
-            .email("Email is invalid"),
-        password: yup.string()
-            .required("Required *")
-            .min(6, "Password must be at least 6 characters")
-            .oneOf([yup.ref('password'), null, "password must match"])
+        mobile_no: yup
+            .number()
+            .min(1999999999, "Not Valid Phone Number !")
+            .max(9999999999, "Not Valid Phone Number !"),
+        password: yup
+            .string()
+            .required("Password is Required *")
+            .matches(
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character"
+            )
     })
+
+
+    const SigninHandler = async (values) => {
+        setLoading(true);
+        console.log(values);
+
+        var formData = new FormData();
+        formData.append("mobile_no", values.mobile_no);
+        formData.append("password", values.password);
+        formData.append("fcm_token", "");
+
+        let response = await loginApi({ data: formData })
+        console.log("res", response);
+
+        if (response.status == 'Success') {
+            Globals.api_token = response.data.api_token
+            await AsyncStorage.setItem('@store1:User', JSON.stringify({ data: response.data }));
+            setLoading(false);
+
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Dashboard' }]
+            })
+
+            ToastAndroid.show("Signin Successfully", ToastAndroid.SHORT);
+            console.log("response", response);
+        }
+        else {
+            alert(response.message);
+            setLoading(false);
+            ToastAndroid.show("Signin Unsuccessfull", ToastAndroid.SHORT);
+        }
+    }
+
     return (
         <ScrollView style={{ backgroundColor: 'white' }}>
             <Container containerStyle={styles.container}>
@@ -33,13 +77,14 @@ const Signin = ({ navigation }) => {
                 <Label style={styles.text1}>Sign In to Your Vendor Account</Label>
 
                 <Formik
-                    initialValues={{email:'' , password:''}}
+                    initialValues={{ mobile_no: '', password: '' }}
                     validationSchema={SigninSchema}
+                    onSubmit={SigninHandler}
                 >
                     {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
                         <>
                             <InputBox
-                                placeholder="Email"
+                                placeholder="Phone number"
                                 inputStyle={{
                                     maxWidth: '75%'
                                 }}
@@ -49,23 +94,26 @@ const Signin = ({ navigation }) => {
                                     borderColor: '#F2F2F2',
                                     marginTop: vs(20),
                                 }}
-                                onChangeText={handleChange('email')}
-                                onBlur={handleBlur('email')}
-                                value={values.email}
+                                onChangeText={handleChange('mobile_no')}
+                                onBlur={handleBlur('mobile_no')}
+                                value={values.mobile_no}
+                                keyboardType="numeric"
                                 inputHeight={50}
                                 textSize={14}
                             />
-                            {errors.email && <Label style={{
-                                color:'red',
-                                alignSelf:'flex-start',
-                                marginLeft:hs(20)
-                            }}>{errors.email}</Label>}
+                            {errors.mobile_no && <Label style={{
+                                color: 'red',
+                                alignSelf: 'flex-start',
+                                marginLeft: hs(15),
+                                marginTop: vs(5)
+                            }}>{errors.mobile_no}</Label>}
 
                             <InputBox
                                 placeholder="Password"
                                 inputStyle={{
                                     maxWidth: '75%'
                                 }}
+                                secureTextEntry={true}
                                 containerStyle={{
                                     width: '92%',
                                     backgroundColor: '#fff',
@@ -79,9 +127,10 @@ const Signin = ({ navigation }) => {
                                 textSize={14}
                             />
                             {errors.password && <Label style={{
-                                color:'red',
+                                color: 'red',
                                 alignSelf: 'flex-start',
-                                marginLeft: hs(20)
+                                marginLeft: hs(15),
+                                marginTop: vs(5)
                             }}>{errors.password}</Label>}
 
                             <Btn
@@ -91,15 +140,13 @@ const Signin = ({ navigation }) => {
                                     borderRadius: 5,
                                     justifyContent: 'center',
                                     width: '92%',
-                                    // elevation: 2,
                                     alignSelf: 'center',
                                     marginTop: vs(20),
                                 }}
                                 btnHeight={50}
                                 textColor={'white'}
                                 textSize={14}
-                                onPress={() => navigation.navigate("Dashboard")}
-                                // onPress={()=> console.log(handleSubmit)}
+                                onPress={handleSubmit}
                             />
                         </>
                     )}
@@ -109,7 +156,6 @@ const Signin = ({ navigation }) => {
                     <Label style={styles.text2} onPress={() => navigation.navigate("ForgotPassword")}>Forgot Password?</Label>
                 </Container>
 
-
                 <Container containerStyle={styles.container3}>
                     <Label style={styles.text3}>Don't have an account?</Label>
                     <Label style={styles.text4} onPress={() => navigation.navigate("Signup")}>Sign up</Label>
@@ -117,31 +163,33 @@ const Signin = ({ navigation }) => {
 
                 <Container containerStyle={styles.container4}>
                     <Container containerStyle={styles.container5}>
-                        <TouchableOpacity>
+                        <Pressable onPress={() => onGooglePress()}>
                             <Image
                                 source={Images.google}
                                 style={styles.googleimg}
                             />
-                        </TouchableOpacity>
+                        </Pressable>
 
-                        <TouchableOpacity>
+                        <Pressable onPress={() => OnFbLogin()}>
                             <Image
                                 source={Images.fb}
                                 style={styles.fbimg}
                             />
-                        </TouchableOpacity>
+                        </Pressable>
 
-                        <TouchableOpacity>
+                        <Pressable>
                             <Image
                                 source={Images.twitter}
                                 style={styles.twitterimg}
                             />
-                        </TouchableOpacity>
+                        </Pressable>
                     </Container>
                 </Container>
+                {Loading ? <LoadingIndicator /> : null}
             </Container>
         </ScrollView>
     )
+
 }
 
 export default Signin;

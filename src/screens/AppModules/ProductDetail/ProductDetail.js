@@ -14,37 +14,22 @@ const ProductDetail = ({ navigation }) => {
     const ProductData = [
         {
             id: 1,
-            image: require('../../../assets/images/item1.png'),
-            image2: require('../../../assets/images/item.png'),
-        },
-        {
-            id: 2,
             title: 'Organic Bananas',
-        },
-        {
-            id: 3,
-            name: 'Category name :',
-            categoryName: 'Fruit'
-        },
-        {
-            id: 4,
-            name2: 'Weight',
-            weight: '12 piece'
-        },
-        {
-            id: 5,
-            name3: 'Offer discount',
-            discount: '5%',
-            image3: require('../../../assets/images/change.png'),
-            image4: require('../../../assets/images/delete.png')
-        },
-        {
-            id: 6,
+            cat_name: 'Category name : ',
+            categories: 'Fruits',
+            unit: 'Weight : ',
+            piece: '12 piece',
+            discount: 'Offer discount',
+            dis_per: '5 %',
+            price: 'Price : ',
+            amount: '$ 4.99',
+            change_img: require('../../../assets/images/edit.png'),
+            delete_img: require('../../../assets/images/delete.png'),
             heading: 'Product description',
-            text1: 'Lorem Ipsum is simply dummy text of the printing and',
-            text2: 'typesetttig industry. Lorem Ipsum has been the',
-            text3: 'industrys standard dummy text'
-        }
+            des_txt1: 'Lorem Ipsum is simply dummy text of the printing and',
+            des_txt2: 'typesetttig industry. Lorem Ipsum has been the',
+            des_txt3: 'industrys standard dummy text'
+        },
     ];
 
     const renderProductdetail = ({ item }) => {
@@ -56,104 +41,61 @@ const ProductDetail = ({ navigation }) => {
     }
 
     return (
-        <ScrollView style={{
-            backgroundColor:'white'
-        }} contentContainerStyle={{
-            paddingBottom:vs(50)
-        }}>
-            <Container containerStyle={styles.container}>
-                <Container containerStyle={styles.container2}>
-                    <Container containerStyle={styles.container3}>
-                        <Container containerStyle={styles.container4}>
-                            <Image
-                                source={Images.item1}
-                                style={styles.itemimg}
-                            />
-                        </Container>
+        <View style={styles.container}>
+            <Container containerStyle={styles.container3}>
+                <Container containerStyle={styles.container4}>
+                    <Image
+                        source={Images.item1}
+                        style={styles.itemimg}
+                    />
+                </Container>
 
-                        <Container containerStyle={styles.container5}>
-                            <Image
-                                source={Images.item}
-                                style={styles.itemimg}
-                            />
-                        </Container>
-                    </Container>
-
-                    <Container containerStyle={styles.container6}>
-                        <Label style={styles.label}>Organic Bananas</Label>
-                    </Container>
-
-                    <Container containerStyle={styles.container7}>
-                        <Label style={styles.label2}>Category name :</Label>
-                        <Label style={styles.label3}>Fruit</Label>
-                    </Container>
-
-                    <Container containerStyle={styles.container8}>
-                        <Label style={styles.label2}>Weight :</Label>
-                        <Label style={styles.label3}>12 piece</Label>
-                    </Container>
-
-                    <Container containerStyle={styles.container8}>
-                        <Label style={styles.label2}>Offer discount :</Label>
-                        <Label style={styles.label3}>5 %</Label>
-
-                        <Container containerStyle={styles.container9}>
-                            <Image
-                                source={Images.edit}
-                                style={styles.editimg}
-                            />
-                            <Image
-                                source={Images.del}
-                                style={styles.delimg}
-                            />
-                        </Container>
-                    </Container>
-
-                    <Container containerStyle={styles.container10}>
-                        <Label style={styles.label4}>Product description</Label>
-                        <Label style={styles.label5}>Lorem Ipsum is simply dummy text of the printing and typesetttig industry. Lorem Ipsum has been the industrys standard dummy text</Label>
-                        <Label style={styles.label5}>Lorem Ipsum is simply dummy text of the printing and typesetttig industry. Lorem Ipsum has been the industrys standard dummy text</Label>
-                        <Label style={styles.label5}>Lorem Ipsum is simply dummy text of the printing and typesetttig industry. Lorem Ipsum has been the industrys standard dummy text</Label>
-                        <Label style={styles.label5}>Lorem Ipsum is simply dummy text of the printing and typesetttig industry. Lorem Ipsum has been the industrys standard dummy text</Label>
-                    </Container>
-
-                    <Container containerStyle={styles.container11}>
-                        <Btn
-                            title="Delete"
-                            btnStyle={{
-                                backgroundColor: '#fff',
-                                borderRadius: 5,
-                                width: '48%',
-                                borderColor: 'red',
-                                borderWidth: 1,
-                                // elevation: 2,
-                                marginTop: vs(20),
-                                justifyContent: 'center',
-                                alignSelf: 'center',
-                            }}
-                            btnHeight={50}
-                            textColor={'red'}
-                            textSize={14}
-                        />
-                        <Btn
-                            title="Edit"
-                            btnStyle={{
-                                backgroundColor: '#009345',
-                                borderRadius: 5,
-                                width: '48%',
-                                marginTop: vs(20),
-                                justifyContent: 'center',
-                                alignSelf: 'center',
-                            }}
-                            btnHeight={50}
-                            textColor={'white'}
-                            textSize={14}
-                            onPress={() => navigation.navigate("EditProduct")}
-                        />
-                    </Container>
+                <Container containerStyle={styles.container5}>
+                    <Image
+                        source={Images.item}
+                        style={styles.itemimg}
+                    />
                 </Container>
             </Container>
-        </ScrollView>
+
+            <FlatList
+                data={ProductData}
+                renderItem={renderProductdetail}
+                keyExtractor={(item) => item.id}
+            />
+
+            <Container containerStyle={styles.container6}>
+                <Btn
+                    title="Delete"
+                    btnStyle={{
+                        backgroundColor: '#fff',
+                        borderRadius: 5,
+                        width: '48%',
+                        borderColor: 'red',
+                        borderWidth: 1,
+                        justifyContent: 'center',
+                        alignSelf: 'center',
+                    }}
+                    btnHeight={50}
+                    textColor={'red'}
+                    textSize={14}
+                />
+                <Btn
+                    title="Edit"
+                    btnStyle={{
+                        backgroundColor: '#009345',
+                        borderRadius: 5,
+                        width: '48%',
+                        justifyContent: 'center',
+                        alignSelf: 'center',
+                    }}
+                    btnHeight={50}
+                    textColor={'white'}
+                    textSize={14}
+                    onPress={() => navigation.navigate("EditProduct")}
+                />
+            </Container>
+        </View>
     )
 }
 

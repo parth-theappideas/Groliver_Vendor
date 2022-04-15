@@ -7,6 +7,7 @@ import { fs, hs, vs } from "../../../utils/stylesUtils";
 import Btn from "../../../components/Btn";
 import Container from "../../../components/container";
 import styles from "./Styles";
+import Addnewitems from "./Addnewitems";
 
 const Myproducts = ({ navigation }) => {
 
@@ -81,23 +82,16 @@ const Myproducts = ({ navigation }) => {
                 }} />}
             />
 
-            <Container>
-                <FlatList
-                    data={ProductsData}
-                    renderItem={renderProductitems}
-                    keyExtractor={(index) => index.toString()}
-                    scrollEnabled={true}
-                />
-
-                <Container containerStyle={styles.container2}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Addnewproduct")}>
-                        <Image
-                            source={Images.add}
-                            style={styles.addimg}
-                        />
-                    </TouchableOpacity>
-                </Container>
-            </Container>
+            <FlatList
+                data={ProductsData}
+                renderItem={renderProductitems}
+                scrollEnabled={true}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={{
+                    paddingBottom: vs(5)
+                }}
+            />
+            <Addnewitems />
         </Container>
     )
 }

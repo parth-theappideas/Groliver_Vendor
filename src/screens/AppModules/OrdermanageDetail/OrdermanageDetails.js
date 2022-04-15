@@ -77,7 +77,7 @@ const OrdermanageDetail = ({ }) => {
             <FlatList
                 data={OrdermanageData}
                 renderItem={renderOrdermanageDetail}
-                keyExtractor={(index) => index.toString()}
+                keyExtractor={(item) => item.id}
             />
         </Container>
     )

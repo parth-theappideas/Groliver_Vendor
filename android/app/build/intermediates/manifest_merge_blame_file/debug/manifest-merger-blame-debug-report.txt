@@ -63,6 +63,65 @@
 35-->/home/theappideas/React Native/GroliverVendorApp/android/app/src/main/AndroidManifest.xml:21:23-70
 36            </intent-filter>
 37        </activity>
-38    </application>
-39
-40</manifest>
+38
+39        <provider
+39-->[:react-native-image-picker] /home/theappideas/React Native/GroliverVendorApp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:9-18:20
+40            android:name="com.imagepicker.ImagePickerProvider"
+40-->[:react-native-image-picker] /home/theappideas/React Native/GroliverVendorApp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:11:13-63
+41            android:authorities="com.vendor.imagepickerprovider"
+41-->[:react-native-image-picker] /home/theappideas/React Native/GroliverVendorApp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:13-71
+42            android:exported="false"
+42-->[:react-native-image-picker] /home/theappideas/React Native/GroliverVendorApp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-37
+43            android:grantUriPermissions="true" >
+43-->[:react-native-image-picker] /home/theappideas/React Native/GroliverVendorApp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:13-47
+44            <meta-data
+44-->[:react-native-image-picker] /home/theappideas/React Native/GroliverVendorApp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:13-17:70
+45                android:name="android.support.FILE_PROVIDER_PATHS"
+45-->[:react-native-image-picker] /home/theappideas/React Native/GroliverVendorApp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:16:17-67
+46                android:resource="@xml/imagepicker_provider_paths" />
+46-->[:react-native-image-picker] /home/theappideas/React Native/GroliverVendorApp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:17:17-67
+47        </provider>
+48
+49        <activity
+49-->[com.google.android.gms:play-services-auth:19.2.0] /home/theappideas/.gradle/caches/transforms-3/193b9c6474410f24c844bda5e45bbae0/transformed/jetified-play-services-auth-19.2.0/AndroidManifest.xml:23:9-27:75
+50            android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
+50-->[com.google.android.gms:play-services-auth:19.2.0] /home/theappideas/.gradle/caches/transforms-3/193b9c6474410f24c844bda5e45bbae0/transformed/jetified-play-services-auth-19.2.0/AndroidManifest.xml:24:13-93
+51            android:excludeFromRecents="true"
+51-->[com.google.android.gms:play-services-auth:19.2.0] /home/theappideas/.gradle/caches/transforms-3/193b9c6474410f24c844bda5e45bbae0/transformed/jetified-play-services-auth-19.2.0/AndroidManifest.xml:25:13-46
+52            android:exported="false"
+52-->[com.google.android.gms:play-services-auth:19.2.0] /home/theappideas/.gradle/caches/transforms-3/193b9c6474410f24c844bda5e45bbae0/transformed/jetified-play-services-auth-19.2.0/AndroidManifest.xml:26:13-37
+53            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+53-->[com.google.android.gms:play-services-auth:19.2.0] /home/theappideas/.gradle/caches/transforms-3/193b9c6474410f24c844bda5e45bbae0/transformed/jetified-play-services-auth-19.2.0/AndroidManifest.xml:27:13-72
+54        <!--
+55            Service handling Google Sign-In user revocation. For apps that do not integrate with
+56            Google Sign-In, this service will never be started.
+57        -->
+58        <service
+58-->[com.google.android.gms:play-services-auth:19.2.0] /home/theappideas/.gradle/caches/transforms-3/193b9c6474410f24c844bda5e45bbae0/transformed/jetified-play-services-auth-19.2.0/AndroidManifest.xml:33:9-37:51
+59            android:name="com.google.android.gms.auth.api.signin.RevocationBoundService"
+59-->[com.google.android.gms:play-services-auth:19.2.0] /home/theappideas/.gradle/caches/transforms-3/193b9c6474410f24c844bda5e45bbae0/transformed/jetified-play-services-auth-19.2.0/AndroidManifest.xml:34:13-89
+60            android:exported="true"
+60-->[com.google.android.gms:play-services-auth:19.2.0] /home/theappideas/.gradle/caches/transforms-3/193b9c6474410f24c844bda5e45bbae0/transformed/jetified-play-services-auth-19.2.0/AndroidManifest.xml:35:13-36
+61            android:permission="com.google.android.gms.auth.api.signin.permission.REVOCATION_NOTIFICATION"
+61-->[com.google.android.gms:play-services-auth:19.2.0] /home/theappideas/.gradle/caches/transforms-3/193b9c6474410f24c844bda5e45bbae0/transformed/jetified-play-services-auth-19.2.0/AndroidManifest.xml:36:13-107
+62            android:visibleToInstantApps="true" />
+62-->[com.google.android.gms:play-services-auth:19.2.0] /home/theappideas/.gradle/caches/transforms-3/193b9c6474410f24c844bda5e45bbae0/transformed/jetified-play-services-auth-19.2.0/AndroidManifest.xml:37:13-48
+63
+64        <activity
+64-->[com.google.android.gms:play-services-base:17.5.0] /home/theappideas/.gradle/caches/transforms-3/cbc5c86377f75d03b121c53755dd73d8/transformed/jetified-play-services-base-17.5.0/AndroidManifest.xml:23:9-26:75
+65            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+65-->[com.google.android.gms:play-services-base:17.5.0] /home/theappideas/.gradle/caches/transforms-3/cbc5c86377f75d03b121c53755dd73d8/transformed/jetified-play-services-base-17.5.0/AndroidManifest.xml:24:13-79
+66            android:exported="false"
+66-->[com.google.android.gms:play-services-base:17.5.0] /home/theappideas/.gradle/caches/transforms-3/cbc5c86377f75d03b121c53755dd73d8/transformed/jetified-play-services-base-17.5.0/AndroidManifest.xml:25:13-37
+67            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+67-->[com.google.android.gms:play-services-base:17.5.0] /home/theappideas/.gradle/caches/transforms-3/cbc5c86377f75d03b121c53755dd73d8/transformed/jetified-play-services-base-17.5.0/AndroidManifest.xml:26:13-72
+68
+69        <meta-data
+69-->[com.google.android.gms:play-services-basement:17.5.0] /home/theappideas/.gradle/caches/transforms-3/49082f8dff4f66a25d4d47841ba1595c/transformed/jetified-play-services-basement-17.5.0/AndroidManifest.xml:23:9-25:69
+70            android:name="com.google.android.gms.version"
+70-->[com.google.android.gms:play-services-basement:17.5.0] /home/theappideas/.gradle/caches/transforms-3/49082f8dff4f66a25d4d47841ba1595c/transformed/jetified-play-services-basement-17.5.0/AndroidManifest.xml:24:13-58
+71            android:value="@integer/google_play_services_version" />
+71-->[com.google.android.gms:play-services-basement:17.5.0] /home/theappideas/.gradle/caches/transforms-3/49082f8dff4f66a25d4d47841ba1595c/transformed/jetified-play-services-basement-17.5.0/AndroidManifest.xml:25:13-66
+72    </application>
+73
+74</manifest>
